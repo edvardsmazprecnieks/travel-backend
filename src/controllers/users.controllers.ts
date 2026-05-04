@@ -54,7 +54,6 @@ export const loginUserController = async (req: Request, res: Response): Promise<
         await userServices.saveRefreshToken(loggedInUser.id, refreshToken);
 
         res.cookie('refreshToken', refreshToken, {
-            domain: 'travelapp-frontend-statid.onrender.com',
             httpOnly: true,
             secure: true,
             sameSite: 'none',

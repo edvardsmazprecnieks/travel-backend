@@ -1,0 +1,1 @@
+ALTER TABLE "bookings" RENAME COLUMN "passenger_last_name" TO "passenger_surname";

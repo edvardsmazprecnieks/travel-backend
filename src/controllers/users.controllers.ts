@@ -54,9 +54,10 @@ export const loginUserController = async (req: Request, res: Response): Promise<
         await userServices.saveRefreshToken(loggedInUser.id, refreshToken);
 
         res.cookie('refreshToken', refreshToken, {
+            domain: '.onrender.com',
             httpOnly: true,
             secure: true,
-            sameSite: 'none',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             path: '/',
         });

@@ -48,7 +48,6 @@
         "moduleDetection": "force",
         "skipLibCheck": true,
         "allowImportingTsExtensions": true,
-        "noEmit": true,
         "resolveJsonModule": true,
         "typeRoots": ["./node_modules/@types", "./src/types"],
         "inlineSources": true,

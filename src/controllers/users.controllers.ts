@@ -55,10 +55,10 @@ export const loginUserController = async (req: Request, res: Response): Promise<
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-            path: '/',
+            secure: true,
+            sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/',
         });
 
         res.status(200).json({ accessToken, user: loggedInUser });
@@ -86,8 +86,8 @@ export const logoutUserController = async (req: Request, res: Response): Promise
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+            secure: true,
+            sameSite: 'none',
             path: '/',
         });
 
@@ -103,8 +103,8 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
         const clearRefreshCookie = () => {
             res.clearCookie('refreshToken', {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+                secure: true,
+                sameSite: 'none',
                 path: '/',
             });
         };

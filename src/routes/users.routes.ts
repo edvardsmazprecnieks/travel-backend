@@ -5,8 +5,8 @@ import {
     refreshTokenController,
     logoutUserController,
     getMeController,
-} from '../controllers/users.controllers.ts';
-import { authenticateToken } from '../middlewares/auth.middleware.ts';
+} from '../controllers/users.controllers.js';
+import { authenticateToken } from '../middlewares/auth.middleware.js';
 import rateLimit from 'express-rate-limit';
 
 const router = Router();

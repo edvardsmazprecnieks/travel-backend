@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs';
-import { db } from '../db/db.ts';
+import { db } from '../db/db.js';
 import { eq, sql } from 'drizzle-orm';
 import type { InferInsertModel } from 'drizzle-orm';
-import { type SelectUser, usersTable } from '../db/schema.ts';
-import { generateAccessToken } from '../utils/jwt.utils.ts';
+import { type SelectUser, usersTable } from '../db/schema.js';
+import { generateAccessToken } from '../utils/jwt.utils.js';
 
 type RegisterData = Pick<InferInsertModel<typeof usersTable>, 'email'> & {
     password?: string;

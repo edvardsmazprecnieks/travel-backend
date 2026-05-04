@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { searchFlightsController } from '../controllers/flightSearch.controllers.ts';
+import { searchFlightsController } from '../controllers/flightSearch.controllers.js';
 import rateLimit from 'express-rate-limit';
 const router = Router();
 

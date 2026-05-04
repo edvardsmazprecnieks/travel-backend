@@ -1,8 +1,8 @@
-import { db } from '../db/db.ts';
-import { bookingsTable, ticketsTable } from '../db/schema.ts';
-import type { CleanedFlightOffer } from './flightSearch.services.ts';
-import { findUserByID } from './users.services.ts';
-import { stripe } from '../lib/stripe.ts';
+import { db } from '../db/db.js';
+import { bookingsTable, ticketsTable } from '../db/schema.js';
+import type { CleanedFlightOffer } from './flightSearch.services.js';
+import { findUserByID } from './users.services.js';
+import { stripe } from '../lib/stripe.js';
 import { and, eq } from 'drizzle-orm';
 
 interface CreateBookingParams {

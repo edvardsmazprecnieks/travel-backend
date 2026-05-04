@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import * as bookingServices from '../services/booking.services.ts';
+import * as bookingServices from '../services/booking.services.js';
 import * as Sentry from '@sentry/node';
 import { z } from 'zod';
 

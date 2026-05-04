@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import * as userServices from '../services/users.services.ts';
-import { verifyAccessToken } from '../utils/jwt.utils.ts';
+import * as userServices from '../services/users.services.js';
+import { verifyAccessToken } from '../utils/jwt.utils.js';
 import * as Sentry from '@sentry/node';
 
 export const authenticateToken = async (

@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
 import type Stripe from 'stripe';
-import { stripe } from '../lib/stripe.ts';
-import { bookingsTable } from '../db/schema.ts';
-import { db } from '../db/db.ts';
+import { stripe } from '../lib/stripe.js';
+import { bookingsTable } from '../db/schema.js';
+import { db } from '../db/db.js';
 import { eq } from 'drizzle-orm';
 import * as Sentry from '@sentry/node';
 

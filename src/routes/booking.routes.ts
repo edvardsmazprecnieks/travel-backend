@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middlewares/auth.middleware.ts';
+import { authenticateToken } from '../middlewares/auth.middleware.js';
 import {
     createBookingController,
     getUserBookingsController,
-} from '../controllers/booking.controllers.ts';
+} from '../controllers/booking.controllers.js';
 
 const router = Router();
 

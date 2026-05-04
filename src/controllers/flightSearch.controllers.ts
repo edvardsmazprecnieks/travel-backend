@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import * as flightSearchServices from '../services/flightSearch.services.ts';
+import * as flightSearchServices from '../services/flightSearch.services.js';
 import * as Sentry from '@sentry/node';
 
 export const searchFlightsController = async (req: Request, res: Response): Promise<void> => {

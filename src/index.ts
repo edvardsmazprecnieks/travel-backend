@@ -6,10 +6,10 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import usersRoutes from './routes/users.routes.ts';
-import bookingRoutes from './routes/booking.routes.ts';
-import { searchFlightsController } from './controllers/flightSearch.controllers.ts';
-import webhook from './routes/webhook.ts';
+import usersRoutes from './routes/users.routes.js';
+import bookingRoutes from './routes/booking.routes.js';
+import { searchFlightsController } from './controllers/flightSearch.controllers.js';
+import webhook from './routes/webhook.js';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 

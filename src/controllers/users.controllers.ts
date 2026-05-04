@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
-import * as userServices from '../services/users.services.ts';
+import * as userServices from '../services/users.services.js';
 import {
     generateAccessToken,
     generateRefreshToken,
     verifyRefreshToken,
-} from '../utils/jwt.utils.ts';
+} from '../utils/jwt.utils.js';
 import * as Sentry from '@sentry/node';
 import { z } from 'zod';
 

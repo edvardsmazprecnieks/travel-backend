@@ -47,7 +47,6 @@
         "noUncheckedSideEffectImports": true,
         "moduleDetection": "force",
         "skipLibCheck": true,
-        "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
         "typeRoots": ["./node_modules/@types", "./src/types"],
         "inlineSources": true,

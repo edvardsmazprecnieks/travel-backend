@@ -110,7 +110,6 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
         };
 
         const token = req.cookies?.refreshToken;
-        console.log(token);
 
         if (!token) {
             res.status(401).json({ message: 'Refresh token missing.' });

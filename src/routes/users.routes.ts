@@ -8,6 +8,7 @@ import {
 } from '../controllers/users.controllers.js';
 import { authenticateToken } from '../middlewares/auth.middleware.js';
 import rateLimit from 'express-rate-limit';
+import { generateCsrfToken } from '../utils/csrf.utils.js';
 
 const router = Router();
 
@@ -27,5 +28,10 @@ router.post('/refresh', authLimiter, refreshTokenController);
 router.post('/logout', logoutUserController);
 
 router.get('/me', authenticateToken, getMeController);
+
+router.get('/csrf-token', (req, res) => {
+    const token = generateCsrfToken(req, res);
+    res.status(200).json({ csrfToken: token });
+});
 
 export default router;

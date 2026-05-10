@@ -12,6 +12,7 @@ import { searchFlightsController } from './controllers/flightSearch.controllers.
 import webhook from './routes/webhook.js';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { doubleCsrfProtection } from './utils/csrf.utils.js';
 
 if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL environment variable is not set');
@@ -66,6 +67,7 @@ app.use(
 app.use('/api', webhook);
 app.use(express.json()); // parse JSON bodies
 app.use(cookieParser());
+app.use(doubleCsrfProtection);
 
 app.use('/api/user', usersRoutes);
 app.use('/api/bookings', bookingRoutes);
@@ -74,5 +76,5 @@ app.use('/api/flights', searchFlightsController);
 Sentry.setupExpressErrorHandler(app);
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running`);
 });

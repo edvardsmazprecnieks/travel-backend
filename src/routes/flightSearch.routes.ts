@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { searchFlightsController } from '../controllers/flightSearch.controllers.js';
 import rateLimit from 'express-rate-limit';
+
 const router = Router();
 
 const authLimiter = rateLimit({
@@ -9,6 +10,6 @@ const authLimiter = rateLimit({
     message: { message: 'Too many requests, please try again later.' },
 });
 
-router.post('/', authLimiter, searchFlightsController);
+router.get('/', authLimiter, searchFlightsController);
 
 export default router;

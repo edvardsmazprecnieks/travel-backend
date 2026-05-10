@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import argon2 from 'argon2';
 import { db } from '../db/db.js';
 import { eq, sql } from 'drizzle-orm';
 import type { InferInsertModel } from 'drizzle-orm';
@@ -25,8 +25,12 @@ export const createUser = async (userData: RegisterData): Promise<UserWithoutPas
         throw new Error('User with this email already exists.');
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
+    const passwordHash = await argon2.hash(password, {
+        type: argon2.argon2id,
+        memoryCost: 65536,
+        timeCost: 3,
+        parallelism: 1,
+    });
 
     const [newUser] = await db
         .insert(usersTable)
@@ -58,7 +62,7 @@ export const loginUser = async (loginData: LoginData): Promise<UserWithoutPasswo
         throw new Error(emailPasswordErrorMessage);
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
+    const isPasswordCorrect = await argon2.verify(user.passwordHash, password);
     if (!isPasswordCorrect) {
         throw new Error(emailPasswordErrorMessage);
     }

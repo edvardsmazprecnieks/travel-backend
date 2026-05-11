@@ -67,9 +67,11 @@ app.use(
 app.use('/api', webhook);
 app.use(express.json()); // parse JSON bodies
 app.use(cookieParser());
-app.use(doubleCsrfProtection);
 
 app.use('/api/user', usersRoutes);
+
+app.use(doubleCsrfProtection);
+
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/flights', searchFlightsController);
 

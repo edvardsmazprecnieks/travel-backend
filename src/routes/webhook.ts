@@ -24,40 +24,47 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         return;
     }
 
-    switch (event.type) {
-        case 'checkout.session.completed': {
-            const session = event.data.object as Stripe.Checkout.Session;
-            const bookingId = session.metadata?.bookingId;
+    try {
+        switch (event.type) {
+            case 'checkout.session.completed': {
+                const session = event.data.object as Stripe.Checkout.Session;
+                const bookingId = session.metadata?.bookingId;
 
-            if (bookingId) {
-                await db
-                    .update(bookingsTable)
-                    .set({
-                        status: 'CONFIRMED',
-                        stripePaymentIntentId:
-                            typeof session.payment_intent === 'string'
-                                ? session.payment_intent
-                                : null,
-                        updatedAt: new Date(),
-                    })
-                    .where(eq(bookingsTable.id, parseInt(bookingId, 10)));
+                if (bookingId) {
+                    await db
+                        .update(bookingsTable)
+                        .set({
+                            status: 'CONFIRMED',
+                            stripePaymentIntentId:
+                                typeof session.payment_intent === 'string'
+                                    ? session.payment_intent
+                                    : null,
+                            updatedAt: new Date(),
+                        })
+                        .where(eq(bookingsTable.id, parseInt(bookingId, 10)));
+                }
+                break;
             }
-            break;
-        }
-        case 'checkout.session.expired': {
-            const session = event.data.object as Stripe.Checkout.Session;
-            const bookingId = session.metadata?.bookingId;
+            case 'checkout.session.expired': {
+                const session = event.data.object as Stripe.Checkout.Session;
+                const bookingId = session.metadata?.bookingId;
 
-            if (bookingId) {
-                await db
-                    .update(bookingsTable)
-                    .set({ status: 'CANCELLED', updatedAt: new Date() })
-                    .where(eq(bookingsTable.id, parseInt(bookingId, 10)));
+                if (bookingId) {
+                    await db
+                        .update(bookingsTable)
+                        .set({ status: 'CANCELLED', updatedAt: new Date() })
+                        .where(eq(bookingsTable.id, parseInt(bookingId, 10)));
+                }
+                break;
             }
-            break;
+            default:
+                console.log(`Unhandled event: ${event.type}`);
         }
-        default:
-            console.log(`Unhandled event: ${event.type}`);
+    } catch (error) {
+        Sentry.captureException(error);
+        console.error('Failed to process webhook event');
+        res.status(500).send('Webhook handling failed.');
+        return;
     }
 
     res.json({ received: true });

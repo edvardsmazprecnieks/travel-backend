@@ -9,9 +9,9 @@ type RegisterData = Pick<InferInsertModel<typeof usersTable>, 'email'> & {
     password?: string;
 };
 
-type UserWithoutPassword = Omit<SelectUser, 'passwordHash'>;
+type CleanUser = Omit<SelectUser, 'passwordHash' | 'refreshToken'>;
 
-export const createUser = async (userData: RegisterData): Promise<UserWithoutPassword> => {
+export const createUser = async (userData: RegisterData): Promise<CleanUser> => {
     const { email, password } = userData;
 
     if (!password) {
@@ -41,15 +41,15 @@ export const createUser = async (userData: RegisterData): Promise<UserWithoutPas
         throw new Error('Insert failed');
     }
 
-    const { passwordHash: _passwordHash, ...userWithoutPassword } = newUser;
-    return userWithoutPassword;
+    const { passwordHash: _passwordHash, refreshToken: _refreshToken, ...cleanedUser } = newUser;
+    return cleanedUser;
 };
 
 type LoginData = Pick<InferInsertModel<typeof usersTable>, 'email'> & {
     password: string;
 };
 
-export const loginUser = async (loginData: LoginData): Promise<UserWithoutPassword> => {
+export const loginUser = async (loginData: LoginData): Promise<CleanUser> => {
     const { email, password } = loginData;
 
     const user = await db.query.usersTable.findFirst({
@@ -85,36 +85,37 @@ export const loginUser = async (loginData: LoginData): Promise<UserWithoutPasswo
         throw new Error('Failed to update login timestamp.');
     }
 
-    const { passwordHash: _passwordHash, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    const {
+        passwordHash: _passwordHash,
+        refreshToken: _refreshToken,
+        ...cleanedUser
+    } = updatedUser;
+    return cleanedUser;
 };
 
-export const findUserByID = async (id: number): Promise<UserWithoutPassword> => {
+export const findUserByID = async (id: number): Promise<CleanUser> => {
     const foundUser = await db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
 
     if (!foundUser) {
         throw new Error(`User with id nr. ${id} is not found.`);
     }
 
-    const { passwordHash: _passwordHash, ...userWithoutPassword } = foundUser;
-    return userWithoutPassword;
+    const { passwordHash: _passwordHash, refreshToken: _refreshToken, ...cleanedUser } = foundUser;
+    return cleanedUser;
 };
 
-export const findUserByEmail = async (email: string): Promise<UserWithoutPassword> => {
+export const findUserByEmail = async (email: string): Promise<CleanUser> => {
     const foundUser = await db.query.usersTable.findFirst({ where: eq(usersTable.email, email) });
 
     if (!foundUser) {
         throw new Error(`User with given email is not found.`);
     }
 
-    const { passwordHash: _passwordHash, ...userWithoutPassword } = foundUser;
-    return userWithoutPassword;
+    const { passwordHash: _passwordHash, refreshToken: _refreshToken, ...cleanedUser } = foundUser;
+    return cleanedUser;
 };
 
-export const saveRefreshToken = async (
-    userId: number,
-    token: string,
-): Promise<UserWithoutPassword> => {
+export const saveRefreshToken = async (userId: number, token: string): Promise<CleanUser> => {
     const [updatedUser] = await db
         .update(usersTable)
         .set({ refreshToken: token })
@@ -125,8 +126,12 @@ export const saveRefreshToken = async (
         throw new Error('Failed to remove refresh token.');
     }
 
-    const { passwordHash: _passwordHash, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    const {
+        passwordHash: _passwordHash,
+        refreshToken: _refreshToken,
+        ...cleanedUser
+    } = updatedUser;
+    return cleanedUser;
 };
 
 export const getRefreshToken = async (userId: number): Promise<string | null> => {
@@ -137,7 +142,7 @@ export const getRefreshToken = async (userId: number): Promise<string | null> =>
     return foundUser?.refreshToken ?? null;
 };
 
-export const findUserByRefreshToken = async (token: string): Promise<UserWithoutPassword> => {
+export const findUserByRefreshToken = async (token: string): Promise<CleanUser> => {
     const foundUser = await db.query.usersTable.findFirst({
         where: eq(usersTable.refreshToken, token),
     });
@@ -146,11 +151,11 @@ export const findUserByRefreshToken = async (token: string): Promise<UserWithout
         throw new Error(`User with given token is not found.`);
     }
 
-    const { passwordHash: _passwordHash, ...userWithoutPassword } = foundUser;
-    return userWithoutPassword;
+    const { passwordHash: _passwordHash, refreshToken: _refreshToken, ...cleanedUser } = foundUser;
+    return cleanedUser;
 };
 
-export const clearTokens = async (userId: number): Promise<UserWithoutPassword> => {
+export const clearTokens = async (userId: number): Promise<CleanUser> => {
     const [updatedUser] = await db
         .update(usersTable)
         .set({ accessTokenVersion: sql`${usersTable.accessTokenVersion} + 1`, refreshToken: null })
@@ -161,8 +166,12 @@ export const clearTokens = async (userId: number): Promise<UserWithoutPassword> 
         throw new Error('Failed to remove refresh token.');
     }
 
-    const { passwordHash: _passwordHash, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    const {
+        passwordHash: _passwordHash,
+        refreshToken: _refreshToken,
+        ...cleanedUser
+    } = updatedUser;
+    return cleanedUser;
 };
 
 export const refreshAccessToken = async (token: string): Promise<{ accessToken: string }> => {

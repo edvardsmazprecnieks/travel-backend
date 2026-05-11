@@ -7,6 +7,9 @@ import {
 } from '../utils/jwt.utils.js';
 import * as Sentry from '@sentry/node';
 import { z } from 'zod';
+import { db } from '../db/db.js';
+import { usersTable } from '../db/schema.js';
+import { eq } from 'drizzle-orm';
 
 const emailPassword = z.object({
     email: z.email(),
@@ -123,8 +126,14 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
             return;
         }
 
-        const storedTokenUser = await userServices.findUserByID(payload.userId);
-        const storedToken = storedTokenUser.refreshToken;
+        const userRefreshToken = await db.query.usersTable.findFirst({
+            where: eq(usersTable.id, payload.userId),
+            columns: {
+                refreshToken: true,
+            },
+        });
+
+        const storedToken = userRefreshToken?.refreshToken;
 
         if (!storedToken || storedToken !== token) {
             clearRefreshCookie();
@@ -132,12 +141,11 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
             return;
         }
 
-        const newAccessToken = generateAccessToken(
-            payload.userId,
-            storedTokenUser.accessTokenVersion,
-        );
+        const cleanedUser = await userServices.findUserByID(payload.userId);
 
-        res.status(200).json({ accessToken: newAccessToken, user: storedTokenUser });
+        const newAccessToken = generateAccessToken(payload.userId, cleanedUser.accessTokenVersion);
+
+        res.status(200).json({ accessToken: newAccessToken, user: cleanedUser });
     } catch (error) {
         Sentry.captureException(error);
         res.status(500).json({ message: 'Internal Server Error' });

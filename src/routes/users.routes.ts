@@ -8,7 +8,7 @@ import {
 } from '../controllers/users.controllers.js';
 import { authenticateToken } from '../middlewares/auth.middleware.js';
 import rateLimit from 'express-rate-limit';
-import { generateCsrfToken } from '../utils/csrf.utils.js';
+import { doubleCsrfProtection, generateCsrfToken } from '../utils/csrf.utils.js';
 
 const router = Router();
 
@@ -23,9 +23,9 @@ router.post('/register', authLimiter, registerUserController);
 
 router.post('/login', authLimiter, loginUserController);
 
-router.post('/refresh', authLimiter, refreshTokenController);
+router.post('/refresh', authLimiter, doubleCsrfProtection, refreshTokenController);
 
-router.post('/logout', logoutUserController);
+router.post('/logout', doubleCsrfProtection, logoutUserController);
 
 router.get('/me', authenticateToken, getMeController);
 

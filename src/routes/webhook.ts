@@ -20,7 +20,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         );
     } catch (error) {
         Sentry.captureException(error);
-        res.status(400).send(`Webhook Error: ${(error as Error).message}`);
+        res.status(400).send('Webhook Error');
         return;
     }
 

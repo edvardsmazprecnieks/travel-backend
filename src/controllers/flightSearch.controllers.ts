@@ -6,7 +6,16 @@ import { z } from 'zod';
 const flightSearchObject = z.object({
     originLocationCode: z.string().regex(/^[a-zA-Z]{3}$/, 'Invalid IATA code'),
     destinationLocationCode: z.string().regex(/^[a-zA-Z]{3}$/, 'Invalid IATA code'),
-    departureDate: z.iso.date('Invalid date'),
+    departureDate: z.iso.date('Invalid date').refine(
+        (validate) => {
+            const minDate = new Date().toISOString().slice(0, 10);
+            const maxDate = new Date();
+            maxDate.setDate(maxDate.getDate() + 330);
+            const maxDateStr = maxDate.toISOString().slice(0, 10);
+            return validate >= minDate && validate <= maxDateStr;
+        },
+        { message: 'Flight search is available from now until 330 days in advance' },
+    ),
     adults: z
         .string()
         .transform(Number)

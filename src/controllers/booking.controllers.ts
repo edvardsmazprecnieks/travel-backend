@@ -6,9 +6,20 @@ import { z } from 'zod';
 const bookingData = z.object({
     passengerFirstName: z.string().min(1).max(100).trim(),
     passengerSurname: z.string().min(1).max(100).trim(),
-    passengerDateOfBirth: z
-        .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
+    passengerDateOfBirth: z.iso
+        .date('Date must be in YYYY-MM-DD format')
+        .refine((validate) => !isNaN(new Date(validate).getTime()), {
+            message: 'Date given must be a real calendar date',
+        })
+        .refine(
+            (validate) => {
+                const dob = new Date(validate);
+                const now = new Date();
+                const age = (now.getTime() - dob.getTime()) / (1000 * 60 * 60 * 34 * 365);
+                return age >= 16 && age <= 100;
+            },
+            { message: 'Passenger date of birth is incorrect' },
+        ),
     itineraryId: z.string().min(1).max(100),
     travelFrom: z
         .string()

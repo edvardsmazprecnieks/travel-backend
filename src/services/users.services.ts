@@ -3,7 +3,6 @@ import { db } from '../db/db.js';
 import { eq, sql } from 'drizzle-orm';
 import type { InferInsertModel } from 'drizzle-orm';
 import { type SelectUser, usersTable } from '../db/schema.js';
-import { generateAccessToken } from '../utils/jwt.utils.js';
 
 type RegisterData = Pick<InferInsertModel<typeof usersTable>, 'email'> & {
     password?: string;
@@ -104,17 +103,6 @@ export const findUserByID = async (id: number): Promise<CleanUser> => {
     return cleanedUser;
 };
 
-export const findUserByEmail = async (email: string): Promise<CleanUser> => {
-    const foundUser = await db.query.usersTable.findFirst({ where: eq(usersTable.email, email) });
-
-    if (!foundUser) {
-        throw new Error(`User with given email is not found.`);
-    }
-
-    const { passwordHash: _passwordHash, refreshToken: _refreshToken, ...cleanedUser } = foundUser;
-    return cleanedUser;
-};
-
 export const saveRefreshToken = async (userId: number, token: string): Promise<CleanUser> => {
     const [updatedUser] = await db
         .update(usersTable)
@@ -132,14 +120,6 @@ export const saveRefreshToken = async (userId: number, token: string): Promise<C
         ...cleanedUser
     } = updatedUser;
     return cleanedUser;
-};
-
-export const getRefreshToken = async (userId: number): Promise<string | null> => {
-    const foundUser = await db.query.usersTable.findFirst({
-        where: eq(usersTable.id, userId),
-        columns: { refreshToken: true },
-    });
-    return foundUser?.refreshToken ?? null;
 };
 
 export const findUserByRefreshToken = async (token: string): Promise<CleanUser> => {
@@ -172,21 +152,4 @@ export const clearTokens = async (userId: number): Promise<CleanUser> => {
         ...cleanedUser
     } = updatedUser;
     return cleanedUser;
-};
-
-export const refreshAccessToken = async (token: string): Promise<{ accessToken: string }> => {
-    const foundUser = await findUserByRefreshToken(token);
-
-    if (!foundUser) {
-        throw new Error('User not found or refresh token is invalid');
-    }
-
-    if (foundUser.status !== 'ACTIVE') {
-        await clearTokens(foundUser.id);
-        throw new Error('User account is not active.');
-    }
-
-    const newAccessToken = generateAccessToken(foundUser.id, foundUser.accessTokenVersion);
-
-    return { accessToken: newAccessToken };
 };

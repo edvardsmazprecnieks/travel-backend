@@ -8,11 +8,11 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import usersRoutes from './routes/users.routes.js';
 import bookingRoutes from './routes/booking.routes.js';
-import { searchFlightsController } from './controllers/flightSearch.controllers.js';
 import webhook from './routes/webhook.js';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { doubleCsrfProtection } from './utils/csrf.utils.js';
+import flightSearchRoutes from './routes/flightSearch.routes.js';
 
 if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL environment variable is not set');
@@ -72,7 +72,7 @@ app.use('/api/user', usersRoutes);
 app.use(doubleCsrfProtection);
 
 app.use('/api/bookings', bookingRoutes);
-app.use('/api/flights', searchFlightsController);
+app.use('/api/flights', flightSearchRoutes);
 
 Sentry.setupExpressErrorHandler(app);
 

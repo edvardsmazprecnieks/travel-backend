@@ -29,7 +29,6 @@ await migrate(db, { migrationsFolder: './migrations' });
 const app = express();
 const port = process.env.PORT || 3000;
 
-//fix cors when frontend deployed
 app.use(
     cors({
         origin: process.env.FRONTEND_URL,

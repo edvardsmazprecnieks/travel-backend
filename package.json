@@ -7,7 +7,7 @@
         "dev": "nodemon",
         "build": "tsc && npm run sentry:sourcemaps",
         "start": "node --import ./dist/instrument.js dist/index.js",
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "vitest",
         "lint": "eslint \"src/**/*.ts\"",
         "lint:fix": "eslint \"src/**/*.ts\" --fix",
         "format": "prettier \"src/**/*.ts\" --write",
@@ -22,7 +22,6 @@
         "@sentry/node": "^10.51.0",
         "amadeus-ts": "^5.1.1",
         "argon2": "^0.44.0",
-        "bcrypt": "^6.0.0",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.6",
         "csrf-csrf": "^4.0.3",
@@ -38,7 +37,6 @@
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
-        "@types/bcrypt": "^6.0.0",
         "@types/cookie-parser": "^1.4.10",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",
@@ -54,6 +52,7 @@
         "prettier": "^3.8.3",
         "tsx": "^4.21.0",
         "typescript": "^6.0.3",
-        "typescript-eslint": "^8.59.0"
+        "typescript-eslint": "^8.59.0",
+        "vitest": "^4.1.6"
     }
 }

@@ -136,6 +136,7 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
         const storedToken = userRefreshToken?.refreshToken;
 
         if (!storedToken || storedToken !== token) {
+            await userServices.clearTokens(payload.userId);
             clearRefreshCookie();
             res.status(403).json({ message: 'Refresh token reuse detected or revoked.' });
             return;
@@ -144,6 +145,18 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
         const cleanedUser = await userServices.findUserByID(payload.userId);
 
         const newAccessToken = generateAccessToken(payload.userId, cleanedUser.accessTokenVersion);
+
+        const newRefreshToken = generateRefreshToken(payload.userId);
+
+        await userServices.saveRefreshToken(payload.userId, newRefreshToken);
+
+        res.cookie('refreshToken', newRefreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/',
+        });
 
         res.status(200).json({ accessToken: newAccessToken, user: cleanedUser });
     } catch (error) {

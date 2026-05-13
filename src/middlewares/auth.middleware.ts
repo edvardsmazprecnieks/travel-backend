@@ -25,6 +25,10 @@ export const authenticateToken = async (
         }
 
         const user = await userServices.findUserByID(payload.userId);
+        if (!user) {
+            res.status(401).json({ message: 'User not found' });
+            return;
+        }
         if (user.accessTokenVersion !== payload.tokenVersion) {
             res.status(401).json({ message: 'Session expired. Please log in again.' });
             return;

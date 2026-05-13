@@ -28,6 +28,7 @@ const db = drizzle(pool);
 await migrate(db, { migrationsFolder: './migrations' });
 
 const app = express();
+app.disable('x-powered-by');
 const port = process.env.PORT || 3000;
 
 app.set('trust proxy', 1);

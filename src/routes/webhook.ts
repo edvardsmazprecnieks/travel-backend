@@ -3,7 +3,7 @@ import type Stripe from 'stripe';
 import { stripe } from '../lib/stripe.js';
 import { bookingsTable } from '../db/schema.js';
 import { db } from '../db/db.js';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import * as Sentry from '@sentry/node';
 
 const router = Router();
@@ -41,7 +41,12 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                                     : null,
                             updatedAt: new Date(),
                         })
-                        .where(eq(bookingsTable.id, parseInt(bookingId, 10)));
+                        .where(
+                            and(
+                                eq(bookingsTable.id, parseInt(bookingId, 10)),
+                                eq(bookingsTable.status, 'PENDING'),
+                            ),
+                        );
                 }
                 break;
             }

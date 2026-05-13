@@ -67,7 +67,7 @@ app.use(
 );
 
 app.use('/api', webhook);
-app.use(express.json()); // parse JSON bodies
+app.use(express.json({ limit: '1mb' })); // parse JSON bodies
 app.use(cookieParser());
 
 app.use('/api/user', usersRoutes);

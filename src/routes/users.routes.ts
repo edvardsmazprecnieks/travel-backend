@@ -18,7 +18,7 @@ const authLimiter = rateLimit({
     message: { message: 'Too many requests, please try again later.' },
 });
 
-// POST /api/users/register - To create a new user
+// POST /api/user/register - To create a new user
 router.post('/register', authLimiter, registerUserController);
 
 router.post('/login', authLimiter, loginUserController);

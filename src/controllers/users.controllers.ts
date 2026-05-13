@@ -33,7 +33,7 @@ export const registerUserController = async (req: Request, res: Response): Promi
         Sentry.captureException(error);
         const message = error instanceof Error ? error.message : 'An unknown error occurred.';
         if (message.includes('already exists')) {
-            res.status(409).json({ message });
+            res.status(409).json({ message: 'Unable to register with these credentials' });
             return;
         }
         res.status(500).json({ message: 'Internal Server Error' });

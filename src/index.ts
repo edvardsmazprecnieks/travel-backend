@@ -13,6 +13,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { doubleCsrfProtection } from './utils/csrf.utils.js';
 import flightSearchRoutes from './routes/flightSearch.routes.js';
+import { globalErrorHandler } from './middlewares/errorHandler.middleware.js';
 
 if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL environment variable is not set');
@@ -75,6 +76,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/flights', flightSearchRoutes);
 
 Sentry.setupExpressErrorHandler(app);
+app.use(globalErrorHandler);
 
 app.listen(port, () => {
     console.log(`Server running`);

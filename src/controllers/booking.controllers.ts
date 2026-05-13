@@ -15,7 +15,7 @@ const bookingData = z.object({
             (validate) => {
                 const dob = new Date(validate);
                 const now = new Date();
-                const age = (now.getTime() - dob.getTime()) / (1000 * 60 * 60 * 34 * 365);
+                const age = (now.getTime() - dob.getTime()) / (1000 * 60 * 60 * 24 * 365);
                 return age >= 16 && age <= 100;
             },
             { message: 'Passenger date of birth is incorrect' },

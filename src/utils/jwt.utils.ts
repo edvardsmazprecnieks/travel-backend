@@ -21,9 +21,7 @@ export const verifyAccessToken = (token: string): AccessTokenPayload | null => {
     try {
         return jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as AccessTokenPayload;
     } catch (error) {
-        if (error instanceof jwt.TokenExpiredError) {
-            throw error;
-        } else if (error instanceof jwt.JsonWebTokenError) {
+        if (error instanceof jwt.TokenExpiredError || error instanceof jwt.JsonWebTokenError) {
             throw error;
         } else {
             Sentry.captureException(error);

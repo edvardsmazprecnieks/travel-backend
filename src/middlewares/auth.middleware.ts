@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import * as userServices from '../services/users.services.js';
 import { verifyAccessToken } from '../utils/jwt.utils.js';
 import * as Sentry from '@sentry/node';
+import jwt from 'jsonwebtoken';
 
 export const authenticateToken = async (
     req: Request,
@@ -32,6 +33,10 @@ export const authenticateToken = async (
         req.userId = payload.userId;
         next();
     } catch (error) {
+        if (error instanceof jwt.TokenExpiredError || error instanceof jwt.JsonWebTokenError) {
+            next(error);
+            return;
+        }
         Sentry.captureException(error);
         next(error);
     }

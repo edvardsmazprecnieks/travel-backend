@@ -3,6 +3,7 @@ import { db } from '../db/db.js';
 import { eq, sql } from 'drizzle-orm';
 import type { InferInsertModel } from 'drizzle-orm';
 import { type SelectUser, usersTable } from '../db/schema.js';
+import { hashToken } from '../utils/jwt.utils.js';
 
 type RegisterData = Pick<InferInsertModel<typeof usersTable>, 'email'> & {
     password?: string;
@@ -104,9 +105,10 @@ export const findUserByID = async (id: number): Promise<CleanUser> => {
 };
 
 export const saveRefreshToken = async (userId: number, token: string): Promise<CleanUser> => {
+    const hashedToken = hashToken(token);
     const [updatedUser] = await db
         .update(usersTable)
-        .set({ refreshToken: token })
+        .set({ refreshToken: hashedToken })
         .where(eq(usersTable.id, userId))
         .returning();
 

@@ -3,6 +3,7 @@ import * as userServices from '../services/users.services.js';
 import {
     generateAccessToken,
     generateRefreshToken,
+    hashToken,
     verifyRefreshToken,
 } from '../utils/jwt.utils.js';
 import * as Sentry from '@sentry/node';
@@ -134,8 +135,9 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
         });
 
         const storedToken = userRefreshToken?.refreshToken;
+        const hashedReqToken = hashToken(token);
 
-        if (!storedToken || storedToken !== token) {
+        if (!storedToken || storedToken !== hashedReqToken) {
             await userServices.clearTokens(payload.userId);
             clearRefreshCookie();
             res.status(403).json({ message: 'Refresh token reuse detected or revoked.' });

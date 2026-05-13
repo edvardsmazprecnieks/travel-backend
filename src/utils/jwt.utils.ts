@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import * as Sentry from '@sentry/node';
+import { createHash } from 'node:crypto';
 
 export interface TokenPayload {
     userId: number;
@@ -10,6 +11,10 @@ export interface TokenPayload {
 export interface AccessTokenPayload extends TokenPayload {
     tokenVersion: number;
 }
+
+export const hashToken = (token: string): string => {
+    return createHash('sha256').update(token).digest('hex');
+};
 
 export const generateAccessToken = (userId: number, tokenVersion: number): string =>
     jwt.sign({ userId, tokenVersion }, process.env.JWT_ACCESS_SECRET!, { expiresIn: '15m' });
